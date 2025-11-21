@@ -60,7 +60,8 @@ var dialogue_items: Array[Dictionary] = [
 @onready var body: TextureRect = %Body
 
 @onready var expression: TextureRect = %Expression
-@onready var action_buttons_v_box_container: VBoxContainer = %ActionButtonsVBoxContainer
+@onready var action_buttons_vbox_container: VBoxContainer = %ActionButtonsVboxContainer
+
 
 func _ready() -> void:
 	show_text(0)
@@ -95,12 +96,12 @@ func show_text(current_item_index: int) -> void:
 
 
 func create_buttons(choices_data: Dictionary) -> void:
-	for button in action_buttons_v_box_container.get_children():
+	for button in action_buttons_vbox_container.get_children():
 		button.queue_free()
 	# We loop over all the dictionary keys
 	for choice_text in choices_data:
 		var button := Button.new()
-		action_buttons_v_box_container.add_child(button)
+		action_buttons_vbox_container.add_child(button)
 		button.text = choice_text
 		var target_line_idx: int = choices_data[choice_text]
 		if target_line_idx == -1:
