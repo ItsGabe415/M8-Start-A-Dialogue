@@ -15,41 +15,8 @@ var bodies := {
 ## - expression: a [code]Texture[/code] containing an expression
 ## - text: a [code]String[/code] containing the text the character says
 ## - character: a [code]Texture[/code] representing the character
-var dialogue_items: Array[Dictionary] = [
-	{
-		"expression": expressions["regular"],
-		"text": "[wave]Hey, wake up![/wave]\nIt's time to make video games.",
-		"character": bodies["sophia"],
-		"choices": {
-			"Let me sleep a little longer": 2,
-			"Let's do it!": 1,
-		},
-	},
-	{
-		"expression": expressions["happy"],
-		"text": "Great! Your first task will be to write a [b]dialogue tree[/b].",
-		"character": bodies["sophia"],
-		"choices": {
-			"I will do my best": 3,
-			"No, let me go back to sleep": 2,
-		},
-	},
-	{
-		"expression": expressions["sad"],
-		"text": "Oh, come on! It'll be fun.",
-		"character": bodies["pink"],
-		"choices": {
-			"No, really, let me go back to sleep": 0,
-			"Alright, I'll try": 1,
-		},
-	},
-	{
-		"expression": expressions["happy"],
-		"text": "That's the spirit! [wave]You can do it![/wave]",
-		"character": bodies["pink"],
-		"choices": {"Okay! (Quit)": - 1},
-	},
-]
+@export var dialogue_items: Array[DialogueItem] = []
+
 
 
 
@@ -71,10 +38,10 @@ func show_text(current_item_index: int) -> void:
 	
 	var current_item := dialogue_items[current_item_index]
 
-	rich_text_label.text = current_item["text"]
-	expression.texture = current_item["expression"]
-	body.texture = current_item["character"]
-	create_buttons(current_item["choices"])
+	rich_text_label.text = current_item.text
+	expression.texture = current_item.expression
+	body.texture = current_item.character
+	create_buttons(current_item.choices)
 	
 	rich_text_label.visible_ratio = 0.0
 
@@ -95,18 +62,18 @@ func show_text(current_item_index: int) -> void:
 	slide_in()
 
 
-func create_buttons(choices_data: Dictionary) -> void:
+func create_buttons(choices_data: Array[DialogueChoice]):
 	for button in action_buttons_vbox_container.get_children():
 		button.queue_free()
 	# We loop over all the dictionary keys
-	for choice_text in choices_data:
+	for choice in choices_data:
 		var button := Button.new()
 		action_buttons_vbox_container.add_child(button)
-		button.text = choice_text
-		var target_line_idx: int = choices_data[choice_text]
-		if target_line_idx == -1:
+		button.text = choice.text
+		if choice.is_quit == true:
 			button.pressed.connect(get_tree().quit)
 		else:
+			var target_line_idx := choice.target_line_idx
 			button.pressed.connect(show_text.bind(target_line_idx))
 
 func slide_in() -> void:
